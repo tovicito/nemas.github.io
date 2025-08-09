@@ -4,17 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Nemás OS: Ubuntu without Ubuntu. Ultra ligero, con TPT y soporte para PCs antiguos.">
-  <title>Nemás OS</title>
+  <title>Nemás OS - El Poder de lo Simple</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #2d97f0;
-      --bg: #0f1c2f;
+      --bg-start: #0a1828;
+      --bg-end: #1e3552;
       --card: #1b2d47;
-      --text: #ffffff;
+      --text: #e0e0e0;
+      --title: #ffffff;
       --accent: #00ffc3;
+      --shadow: rgba(0, 255, 195, 0.2);
     }
 
     * {
@@ -23,61 +26,91 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Ubuntu', sans-serif;
-      background: linear-gradient(to bottom, var(--bg), #1e3552);
+      background: linear-gradient(35deg, var(--bg-start), var(--bg-end));
+      background-size: 400% 400%;
       color: var(--text);
       overflow-x: hidden;
+      animation: gradientBG 15s ease infinite;
     }
 
-    header {
-      padding: 60px 20px;
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      background-color: #081222;
-      animation: slideFade 1.5s ease forwards;
+      padding: 60px 20px;
     }
 
-    header h1 {
-      font-size: 3.5rem;
-      margin-bottom: 10px;
-      color: var(--accent);
+    .hero-title, .hero-subtitle, .tagline, .download-btn {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease forwards;
     }
 
-    header p {
-      font-size: 1.2rem;
-      opacity: 0.8;
+    .hero-title { font-size: 4.5rem; color: var(--title); margin-bottom: 10px; animation-delay: 0.2s; }
+    .hero-subtitle { font-size: 1.5rem; margin-bottom: 5px; animation-delay: 0.4s; }
+    .tagline { font-size: 1.2rem; opacity: 0.7; margin-bottom: 30px; animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     nav {
+      position: sticky;
+      top: 0;
+      padding: 15px 0;
       text-align: center;
-      margin: 20px 0;
+      background: rgba(15, 28, 47, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     nav a {
       color: var(--accent);
-      margin: 0 15px;
+      margin: 0 20px;
       text-decoration: none;
       font-weight: bold;
-      transition: color 0.3s;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
     }
 
     nav a:hover {
       color: var(--text);
+      text-shadow: 0 0 10px var(--accent);
     }
 
     .section {
-      padding: 80px 20px;
+      padding: 100px 20px;
       text-align: center;
-      animation: fadeInUp 1s ease;
-    }Instala .deb, .tar.xz, .sh, apps de comunidad, todo desde una línea de comando o GUI GTK.
-
-    .section:nth-child(even) {
-      background-color: #112438;
+      position: relative;
+      overflow: hidden;
     }
 
-    .section h2 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
+    .section-title {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      color: var(--title);
+      /* Estilos para la animación de scroll */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
     .features {
@@ -89,45 +122,71 @@
 
     .card {
       background-color: var(--card);
-      border-radius: 12px;
-      padding: 20px;
-      width: 280px;
-      transition: transform 0.4s ease, box-shadow 0.4s;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 25px;
+      width: 300px;
+      border: 1px solid transparent;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      /* Estilos para la animación de scroll */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
     .card:hover {
       transform: translateY(-10px) scale(1.03);
-      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+      box-shadow: 0 10px 30px var(--shadow);
+      border-color: var(--accent);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(0, 255, 195, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .card:hover::before {
+      left: 100%;
     }
 
     .card h3 {
       color: var(--accent);
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
     }
 
     .download-btn {
-      background-color: var(--primary);
+      background: linear-gradient(45deg, var(--primary), #57b2f8);
       color: white;
-      padding: 15px 35px;
-      border-radius: 30px;
+      padding: 15px 40px;
+      border-radius: 50px;
       font-size: 1.3rem;
       text-decoration: none;
       display: inline-block;
       margin-top: 30px;
-      animation: pulse 2s infinite;
-      transition: background 0.3s ease;
+      animation-delay: 0.8s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(45, 151, 240, 0.4);
     }
 
     .download-btn:hover {
-      background-color: #1a7ed6;
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(45, 151, 240, 0.6);
     }
 
     footer {
       text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      background-color: #081222;
+      padding: 30px 20px;
+      font-size: 1rem;
+      background-color: var(--bg-start);
+      margin-top: 50px;
     }
 
     .gallery {
@@ -140,59 +199,64 @@
 
     .gallery img {
       width: 280px;
-      border-radius: 8px;
-      transition: transform 0.4s ease;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      transition: transform 0.4s ease, filter 0.4s ease;
+      filter: grayscale(50%);
     }
 
     .gallery img:hover {
       transform: scale(1.05);
+      filter: grayscale(0%);
     }
 
     .testimonials {
       max-width: 800px;
-      margin: 0 auto;
-      font-style: italic;
-      margin-top: 40px;
+      margin: 40px auto 0;
     }
 
-    .testimonials p {
+    .testimonial {
+      background-color: var(--card);
+      border-radius: 10px;
+      padding: 20px;
       margin-bottom: 20px;
+      border-left: 4px solid var(--accent);
+      font-style: italic;
+      /* Estilos para la animación de scroll */
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
-    @keyframes slideFade {
-      from {
-        opacity: 0;
-        transform: translateY(-40px);
-      }
-      to {
+    .testimonial:nth-child(even) {
+        transform: translateX(30px);
+    }
+
+    .testimonial p {
+      margin: 0;
+    }
+
+    /* Clase que añadirá el JS para activar la animación */
+    .is-visible {
         opacity: 1;
-        transform: translateY(0);
-      }
+        transform: none;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    /* Asignar retrasos en la transición para las tarjetas */
+    .card:nth-child(2) { transition-delay: 0.1s; }
+    .card:nth-child(3) { transition-delay: 0.2s; }
+    .card:nth-child(4) { transition-delay: 0.3s; }
+    .testimonial:nth-child(2) { transition-delay: 0.1s; }
+    .testimonial:nth-child(3) { transition-delay: 0.2s; }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Nemás OS</h1>
-    <p>AHORA, la versión 1.0 está fuera<p>
-    <p>Ubuntu without Ubuntu</p>
+  <header class="hero">
+    <h1 class="hero-title">Nemás OS</h1>
+    <p class="hero-subtitle">Presentamos la Versión 1.0</p>
+    <p class="tagline">Ubuntu without Ubuntu</p>
     <a class="download-btn" href="https://archive.org/details/nemasos1-0">Descargar ISO</a>
   </header>
 
@@ -204,69 +268,87 @@
   </nav>
 
   <section class="section" id="features">
-    <h2>Características destacadas</h2>
+    <h2 class="section-title">Características Destacadas</h2>
     <div class="features">
       <div class="card">
         <h3>Ligero</h3>
-        <p>Funciona en PCs con 2 GB de RAM o menos, incluso con CPU de 1 núcleo.</p>
+        <p>Optimizado para rendir al máximo en hardware modesto. Ideal para equipos con solo 2GB de RAM y CPU de un núcleo.</p>
       </div>
       <div class="card">
         <h3>Moderno</h3>
-        <p>Kde PLASMA REAL, TPT revolucionario, compatible con 10 formatos de paquetes, excepcional</p>
+        <p>Disfruta de un escritorio moderno con KDE Plasma. Incluye nuestro revolucionario gestor de paquetes TPT, compatible con más de 10 formatos.</p>
       </div>
       <div class="card">
         <h3>Compatible</h3>
-        <p>Basado en Debian, con lo mejor de ubuntu (su facilidad de uso) pero sin lo peor (SNAP)</p>
+        <p>Construido sobre la sólida base de Debian, disfrutando la facilidad de Ubuntu pero libre de Snap.</p>
       </div>
       <div class="card">
         <h3>Rápido</h3>
-        <p>Arranque optimizado, con un splash screen minimalista</p>
+        <p>Experimenta un arranque ultrarrápido y una interfaz fluida con nuestro splash screen minimalista.</p>
       </div>
     </div>
   </section>
 
   <section class="section" id="tpt">
-    <h2>Gestor de paquetes TPT</h2>
+    <h2 class="section-title">Gestor de Paquetes TPT</h2>
     <div class="features">
       <div class="card">
-        <h3>Ligero</h3>
-        <p>Pesa solo 128 KiB, ideal para entornos minimalistas.</p>
+        <h3>Súper Ligero</h3>
+        <p>Con un peso de solo 128 KiB, TPT es la herramienta perfecta para mantener tu sistema ágil y ligero.</p>
       </div>
       <div class="card">
         <h3>Funcional</h3>
-        <p>Instala snap, flatpak, deb, sh, py, exe, y muchos más</p>
+        <p>Unifica tu gestión de software. TPT maneja nativamente .deb, Flatpak, Snap, AppImage, .sh, .py y más.</p>
       </div>
       <div class="card">
         <h3>Avanzado</h3>
-        <p>Logs, verificación MD5, sistema de caché, actualización offline y self-update.</p>
+        <p>Funciones de nivel profesional: logs detallados, verificación MD5, caché inteligente, y actualizaciones offline.</p>
       </div>
     </div>
   </section>
 
   <section class="section" id="screenshots">
-    <h2>Capturas de pantalla</h2>
+    <h2 class="section-title">Nemás OS en Acción</h2>
     <div class="gallery">
-      <img src="https://via.placeholder.com/280x180.png?text=XFCE+Menu" alt="Plasma menu">
-      <img src="https://via.placeholder.com/280x180.png?text=TPT+GTK+GUI" alt="TPT GUI">
-      <img src="https://via.placeholder.com/280x180.png?text=Calamares+Installer" alt="Calamares">
+      <img src="https://images.unsplash.com/photo-1623671512344-38c821193a9e?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Escritorio Nemás OS">
+      <img src="https://images.unsplash.com/photo-1593421293075-e0a58145244c?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Gestor de Paquetes TPT">
+      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Instalador Calamares">
     </div>
     <div class="testimonials">
-      <p>"¡Revivió mi netbook del 2008! Ahora vuela como nunca." - <strong>@frikiRetro</strong></p>
-      <p>"TPT es lo mejor desde APT. Instala hasta lo imposible." - <strong>@devterminalero</strong></p>
-      <p>"Lo instalé en un Asus de museo. Anda más rápido que mi Windows 11." - <strong>@abueLinux</strong></p>
+      <div class="testimonial">
+        <p>"¡Revivió mi netbook del 2008! Ahora vuela como nunca." - <strong>@frikiRetro</strong></p>
+      </div>
+      <div class="testimonial">
+        <p>"TPT es lo mejor desde APT. Instala hasta lo imposible." - <strong>@devterminalero</strong></p>
+      </div>
+      <div class="testimonial">
+        <p>"Lo instalé en un Asus de museo. Anda más rápido que mi Windows 11." - <strong>@abueLinux</strong></p>
+      </div>
     </div>
   </section>
 
   <footer>
-    <p>&copy; 2025 Nemás OS - Hecho con 💙 por Neizan y Tomás</p>
+    <p>&copy; 2025 Nemás OS - Creado con 💙 por Neizan y Tomás</p>
   </footer>
 
   <script>
-    // Efecto parallax al hacer scroll
-    window.addEventListener("scroll", () => {
-      document.querySelectorAll(".card").forEach((card, i) => {
-        const offset = window.scrollY * 0.05 * (i % 2 === 0 ? 1 : -1);
-        card.style.transform = `translateY(${offset}px)`;
+    document.addEventListener('DOMContentLoaded', () => {
+      const animatedElements = document.querySelectorAll('.section-title, .card, .testimonial');
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        rootMargin: '0px',
+        threshold: 0.1
+      });
+
+      animatedElements.forEach(element => {
+        observer.observe(element);
       });
     });
   </script>
