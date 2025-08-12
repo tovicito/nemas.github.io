@@ -32,17 +32,18 @@
 
     body {
       font-family: 'Ubuntu', sans-serif;
-      background: linear-gradient(35deg, var(--bg-start), var(--bg-end));
-      background-size: 400% 400%;
+      background-color: var(--bg-start);
       color: var(--text);
       overflow-x: hidden;
-      animation: gradientBG 15s ease infinite;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Sit behind everything */
     }
 
     .hero {
@@ -126,13 +127,12 @@
       padding: 25px;
       width: 300px;
       border: 1px solid transparent;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
       position: relative;
       overflow: hidden;
       /* Estilos para la animación de scroll */
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: translateY(40px) scale(0.95);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
     .card:hover {
@@ -154,6 +154,24 @@
 
     .card:hover::before {
       left: 100%;
+    }
+
+    .card h3, .card p {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .card.is-visible h3 {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.3s;
+    }
+
+    .card.is-visible p {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.4s;
     }
 
     .card h3 {
@@ -197,17 +215,23 @@
       margin-top: 20px;
     }
 
+    .gallery-item {
+      border-radius: 12px;
+      overflow: hidden;
+      will-change: transform;
+    }
+
     .gallery img {
       width: 280px;
       height: 180px;
       object-fit: cover;
-      border-radius: 12px;
-      transition: transform 0.4s ease, filter 0.4s ease;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.4s ease;
       filter: grayscale(50%);
     }
 
-    .gallery img:hover {
-      transform: scale(1.05);
+    .gallery-item:hover img {
+      transform: scale(1.1);
       filter: grayscale(0%);
     }
 
@@ -225,8 +249,8 @@
       font-style: italic;
       /* Estilos para la animación de scroll */
       opacity: 0;
-      transform: translateX(-30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: translateX(-30px) rotate(-2deg);
+      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
     }
 
     .testimonial:nth-child(even) {
@@ -253,6 +277,7 @@
   </style>
 </head>
 <body>
+  <canvas id="particle-canvas"></canvas>
   <header class="hero">
     <h1 class="hero-title">Nemás OS</h1>
     <p class="hero-subtitle">Presentamos la Versión 1.0</p>
@@ -272,15 +297,15 @@
     <div class="features">
       <div class="card">
         <h3>Ligero</h3>
-        <p>Optimizado para rendir al máximo en hardware modesto. Ideal para equipos con solo 4GB de ram y una cpu decente de 2 nucleos, aunque puede correr con menos</p>
+        <p>Optimizado para rendir al máximo en hardware modesto. Ideal para equipos con solo 2GB de RAM y CPU de un núcleo.</p>
       </div>
       <div class="card">
         <h3>Moderno</h3>
         <p>Disfruta de un escritorio moderno con KDE Plasma. Incluye nuestro revolucionario gestor de paquetes TPT, compatible con más de 10 formatos.</p>
       </div>
       <div class="card">
-        <h3>Compatible Pero Moderno</h3>
-        <p>Construido sobre la sólida base de Debian, disfrutando la facilidad de Ubuntu pero libre de Snap. Con actualizaciones recientes, nos centramos en poder darte la mejor experiencia, no en que tengas que darte la mejor experiencia</p>
+        <h3>Compatible</h3>
+        <p>Construido sobre la sólida base de Debian, disfrutando la facilidad de Ubuntu pero libre de Snap.</p>
       </div>
       <div class="card">
         <h3>Rápido</h3>
@@ -310,9 +335,15 @@
   <section class="section" id="screenshots">
     <h2 class="section-title">Nemás OS en Acción</h2>
     <div class="gallery">
-      <img src="https://images.unsplash.com/photo-1623671512344-38c821193a9e?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Escritorio Nemás OS">
-      <img src="https://images.unsplash.com/photo-1593421293075-e0a58145244c?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Gestor de Paquetes TPT">
-      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Instalador Calamares">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1623671512344-38c821193a9e?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Escritorio Nemás OS">
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1593421293075-e0a58145244c?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Gestor de Paquetes TPT">
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=280&h=180&crop=entropy&fit=crop" alt="Instalador Calamares">
+      </div>
     </div>
     <div class="testimonials">
       <div class="testimonial">
@@ -333,6 +364,151 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Particle animation script
+      const canvas = document.getElementById('particle-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        let mouse = {
+            x: null,
+            y: null,
+            radius: (canvas.height/100) * (canvas.width/100)
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(0, 255, 195, 0.4)';
+                ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                if (distance < mouse.radius + this.size){
+                    if(mouse.x < this.x && this.x < canvas.width - this.size * 10){ this.x += 5; }
+                    if(mouse.x > this.x && this.x > this.size * 10){ this.x -= 5; }
+                    if(mouse.y < this.y && this.y < canvas.height - this.size * 10){ this.y += 5; }
+                    if(mouse.y > this.y && this.y > this.size * 10){ this.y -= 5; }
+                }
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 12000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * .4) - 0.2;
+                let directionY = (Math.random() * .4) - 0.2;
+                let color = 'rgba(0, 255, 195, 0.4)';
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function connect(){
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (canvas.width/8) * (canvas.height/8)) {
+                        opacityValue = 1 - (distance/20000);
+                        ctx.strokeStyle='rgba(0, 255, 195,' + opacityValue + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0,0,innerWidth, innerHeight);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connect();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            mouse.radius = ((canvas.height/100) * (canvas.width/100));
+            init();
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+
+        init();
+        animate();
+      }
+
+      // Parallax effect for gallery
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      const parallaxSpeed = -0.1;
+
+      function parallaxGallery() {
+        galleryItems.forEach(item => {
+          const rect = item.getBoundingClientRect();
+          // Only animate if the item is in the viewport
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            const y = (rect.top - window.innerHeight / 2) * parallaxSpeed;
+            item.style.transform = `translateY(${y}px)`;
+          }
+        });
+      }
+
+      // Throttled scroll listener
+      let isTicking = false;
+      window.addEventListener('scroll', () => {
+        if (!isTicking) {
+          window.requestAnimationFrame(() => {
+            parallaxGallery();
+            isTicking = false;
+          });
+          isTicking = true;
+        }
+      });
+
+
+      // IntersectionObserver script
       const animatedElements = document.querySelectorAll('.section-title, .card, .testimonial');
 
       const observer = new IntersectionObserver((entries, observer) => {
