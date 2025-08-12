@@ -35,6 +35,44 @@
       background-color: var(--bg-start);
       color: var(--text);
       overflow-x: hidden;
+      line-height: 1.6;
+      cursor: none;
+    }
+
+    .cursor-dot,
+    .cursor-dot-outline {
+      pointer-events: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      z-index: 1001; /* High z-index */
+    }
+
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+    }
+
+    .cursor-dot-outline {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--accent);
+      background-color: transparent;
+    }
+
+    .cursor-dot-outline.hover {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0.5 !important;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     #particle-canvas {
@@ -56,13 +94,28 @@
       padding: 60px 20px;
     }
 
-    .hero-title, .hero-subtitle, .tagline, .download-btn {
+    .hero-subtitle, .tagline, .download-btn {
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 1s ease forwards;
     }
 
-    .hero-title { font-size: 4.5rem; color: var(--title); margin-bottom: 10px; animation-delay: 0.2s; }
+    .hero-title { font-size: 4.5rem; color: var(--title); margin-bottom: 10px; }
+
+    .hero-title span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      animation: revealLetter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes revealLetter {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
     .hero-subtitle { font-size: 1.5rem; margin-bottom: 5px; animation-delay: 0.4s; }
     .tagline { font-size: 1.2rem; opacity: 0.7; margin-bottom: 30px; animation-delay: 0.6s; }
 
@@ -156,10 +209,29 @@
       left: 100%;
     }
 
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(250px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(0, 255, 195, 0.15), transparent 80%);
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+      z-index: 0;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
     .card h3, .card p {
       opacity: 0;
       transform: translateY(15px);
       transition: opacity 0.5s ease, transform 0.5s ease;
+      position: relative;
+      z-index: 1;
     }
 
     .card.is-visible h3 {
@@ -274,9 +346,57 @@
     .testimonial:nth-child(2) { transition-delay: 0.1s; }
     .testimonial:nth-child(3) { transition-delay: 0.2s; }
 
+    /* --- Section Divider --- */
+    .section-divider {
+      position: absolute;
+      bottom: -1px; /* Avoid small gaps */
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+
+    .section-divider svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 90px;
+    }
+
+    .section-divider .shape-fill {
+      fill: var(--bg-start); /* Default fill */
+    }
+
+    .section-alt-bg {
+      background-color: #112438;
+      position: relative; /* For the divider */
+    }
+
+    /* For dividers pointing to an alt-bg section */
+    .section-divider.alt .shape-fill {
+      fill: #112438;
+    }
+
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 1002;
+      transition: width 0.1s ease-out;
+    }
+    .card:nth-child(4) { transition-delay: 0.3s; }
+    .testimonial:nth-child(2) { transition-delay: 0.1s; }
+    .testimonial:nth-child(3) { transition-delay: 0.2s; }
+
   </style>
 </head>
 <body>
+  <div id="progress-bar"></div>
+  <div class="cursor-dot-outline"></div>
+  <div class="cursor-dot"></div>
   <canvas id="particle-canvas"></canvas>
   <header class="hero">
     <h1 class="hero-title">Nemás OS</h1>
@@ -297,7 +417,7 @@
     <div class="features">
       <div class="card">
         <h3>Ligero</h3>
-        <p>Optimizado para rendir al máximo en hardware modesto. Ideal para equipos con solo 2GB de RAM y CPU de un núcleo.</p>
+        <p>Requisitos recomendados: 4GB de RAM y CPU de 2 núcleos para una experiencia fluida. Sin embargo, está ultra-optimizado para revivir hardware antiguo, funcionando incluso con 2GB de RAM y 1 núcleo.</p>
       </div>
       <div class="card">
         <h3>Moderno</h3>
@@ -312,9 +432,14 @@
         <p>Experimenta un arranque ultrarrápido y una interfaz fluida con nuestro splash screen minimalista.</p>
       </div>
     </div>
+    <div class="section-divider alt">
+      <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" class="shape-fill"></path>
+      </svg>
+    </div>
   </section>
 
-  <section class="section" id="tpt">
+  <section class="section section-alt-bg" id="tpt">
     <h2 class="section-title">Gestor de Paquetes TPT</h2>
     <div class="features">
       <div class="card">
@@ -329,6 +454,11 @@
         <h3>Avanzado</h3>
         <p>Funciones de nivel profesional: logs detallados, verificación MD5, caché inteligente, y actualizaciones offline.</p>
       </div>
+    </div>
+    <div class="section-divider">
+      <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" class="shape-fill"></path>
+      </svg>
     </div>
   </section>
 
@@ -364,6 +494,20 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Letter-by-letter animation for hero title
+      const heroTitle = document.querySelector('.hero-title');
+      if (heroTitle) {
+          const text = heroTitle.textContent.trim();
+          const letters = text.split('');
+          heroTitle.textContent = '';
+          letters.forEach((letter, i) => {
+              const span = document.createElement('span');
+              span.textContent = letter === ' ' ? '\u00A0' : letter; // Handle spaces
+              span.style.setProperty('--delay', `${i * 0.07}s`);
+              heroTitle.appendChild(span);
+          });
+      }
+
       // Particle animation script
       const canvas = document.getElementById('particle-canvas');
       if (canvas) {
@@ -496,17 +640,79 @@
       }
 
       // Throttled scroll listener
+      const progressBar = document.getElementById('progress-bar');
       let isTicking = false;
+
+      function handleScroll() {
+        // Parallax
+        parallaxGallery();
+
+        // Progress bar
+        if (progressBar) {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = `${scrollPercent}%`;
+        }
+      }
+
       window.addEventListener('scroll', () => {
         if (!isTicking) {
           window.requestAnimationFrame(() => {
-            parallaxGallery();
+            handleScroll();
             isTicking = false;
           });
           isTicking = true;
         }
       });
 
+
+      // Aurora card effect
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+          card.addEventListener('mousemove', e => {
+              const rect = card.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              card.style.setProperty('--mouse-x', `${x}px`);
+              card.style.setProperty('--mouse-y', `${y}px`);
+          });
+      });
+
+      // Custom cursor script
+      const cursorDot = document.querySelector(".cursor-dot");
+      const cursorOutline = document.querySelector(".cursor-dot-outline");
+      const interactiveElements = document.querySelectorAll('a, button, .card');
+
+      let cursorVisible = false;
+
+      window.addEventListener("mousemove", (e) => {
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        if (!cursorVisible) {
+            cursorDot.style.opacity = 1;
+            cursorOutline.style.opacity = 1;
+            cursorVisible = true;
+        }
+
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+      });
+
+      interactiveElements.forEach(el => {
+          el.addEventListener('mouseenter', () => {
+              cursorOutline.classList.add('hover');
+          });
+          el.addEventListener('mouseleave', () => {
+              cursorOutline.classList.remove('hover');
+          });
+      });
 
       // IntersectionObserver script
       const animatedElements = document.querySelectorAll('.section-title, .card, .testimonial');
