@@ -92,6 +92,7 @@
       align-items: center;
       text-align: center;
       padding: 60px 20px;
+      perspective: 1000px;
     }
 
     .hero-subtitle, .tagline, .download-btn {
@@ -100,7 +101,13 @@
       animation: fadeInUp 1s ease forwards;
     }
 
-    .hero-title { font-size: 4.5rem; color: var(--title); margin-bottom: 10px; }
+    .hero-title {
+      font-size: 4.5rem;
+      color: var(--title);
+      margin-bottom: 10px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
 
     .hero-title span {
       display: inline-block;
@@ -142,7 +149,8 @@
       margin: 0 20px;
       text-decoration: none;
       font-weight: bold;
-      transition: color 0.3s ease, text-shadow 0.3s ease;
+      will-change: transform;
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.3s ease, text-shadow 0.3s ease;
     }
 
     nav a:hover {
@@ -377,6 +385,39 @@
       fill: #112438;
     }
 
+    /* --- Preloader --- */
+    body.is-loading {
+      overflow: hidden;
+    }
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-start);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease-in-out 0.2s;
+    }
+    .preloader-text {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--accent);
+      animation: pulse-text 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-text {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #preloader.loaded {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #progress-bar {
       position: fixed;
       top: 0;
@@ -394,6 +435,9 @@
   </style>
 </head>
 <body>
+  <div id="preloader">
+    <div class="preloader-text">Nemás OS</div>
+  </div>
   <div id="progress-bar"></div>
   <div class="cursor-dot-outline"></div>
   <div class="cursor-dot"></div>
@@ -494,8 +538,38 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Letter-by-letter animation for hero title
+      // Preloader logic
+      const preloader = document.getElementById('preloader');
+      document.body.classList.add('is-loading');
+      window.addEventListener('load', () => {
+        if (preloader) {
+          preloader.classList.add('loaded');
+        }
+        document.body.classList.remove('is-loading');
+      });
+
+      // 3D Hero Title Effect
+      const hero = document.querySelector('.hero');
       const heroTitle = document.querySelector('.hero-title');
+
+      if (hero && heroTitle) {
+        hero.addEventListener('mousemove', (e) => {
+          const { clientX, clientY } = e;
+          const { offsetWidth, offsetHeight } = hero;
+          const x = (clientX - hero.offsetLeft - offsetWidth / 2) / (offsetWidth / 2);
+          const y = (clientY - hero.offsetTop - offsetHeight / 2) / (offsetHeight / 2);
+          const rotateY = x * 15; // Max rotation 15deg
+          const rotateX = -y * 15;
+
+          heroTitle.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        hero.addEventListener('mouseleave', () => {
+          heroTitle.style.transform = 'rotateX(0) rotateY(0)';
+        });
+      }
+
+      // Letter-by-letter animation for hero title
       if (heroTitle) {
           const text = heroTitle.textContent.trim();
           const letters = text.split('');
@@ -712,6 +786,22 @@
           el.addEventListener('mouseleave', () => {
               cursorOutline.classList.remove('hover');
           });
+      });
+
+      // Magnetic buttons
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('mousemove', (e) => {
+          const { offsetX, offsetY, target } = e;
+          const { clientWidth, clientHeight } = target;
+          const x = (offsetX - clientWidth / 2) / (clientWidth / 2);
+          const y = (offsetY - clientHeight / 2) / (clientHeight / 2);
+
+          target.style.transform = `translate(${x * 5}px, ${y * 5}px)`;
+        });
+        link.addEventListener('mouseleave', (e) => {
+          e.target.style.transform = 'translate(0, 0)';
+        });
       });
 
       // IntersectionObserver script
